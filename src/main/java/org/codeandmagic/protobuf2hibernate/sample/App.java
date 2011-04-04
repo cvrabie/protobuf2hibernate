@@ -30,7 +30,7 @@ public class App {
 
         Cat c = Cat.newBuilder()
                 .setName("Eve")
-                .setCreated(System.currentTimeMillis())
+                .setCreated(100L)
                 .setUuid(UUID.randomUUID().toString())
                 .setHairLength(2.31f)
                 .addAllKittens(Arrays.asList(new String[]{"Caty","Nutty"}))

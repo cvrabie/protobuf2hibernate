@@ -10,7 +10,7 @@
         <property name="name" />
         <property name="hairLength" />
         <property name="created" />
-        <bag name="kittens" table="cat_kittens">
+        <bag name="kittens" table="cats_kittens">
             <key column="cat_uuid" foreign-key="uuid" />
             <element type="string" column="val" />
         </bag>
