@@ -8,6 +8,7 @@ import org.springframework.core.io.FileSystemResource;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 public class App {
@@ -35,7 +36,12 @@ public class App {
                 .setHairLength(2.31f)
                 .addAllKittens(Arrays.asList(new String[]{"Caty","Nutty"}))
                 .build();
-
         cd.save(c);
+
+        List<Cat.Builder> cb = cd.getByName("Eve");
+        System.out.print(cb);
+
+        System.out.print(cb.get(0).build());
+
     }
 }

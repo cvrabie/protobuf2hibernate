@@ -21,9 +21,9 @@ public class CatDao {
     }
 
     @Transactional(readOnly = true)
-    public List<Cat> getByName(String name){
+    public List<Cat.Builder> getByName(String name){
         return sessionFactory.getCurrentSession()
-                .createCriteria(Cat.class)
+                .createCriteria(Cat.Builder.class)
                 .add(Restrictions.eq("name", name))
                 .list();
     }
