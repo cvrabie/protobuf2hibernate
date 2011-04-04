@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="org.codeandmagic.protobuf2hibernate.sample.Cat$Builder" table="cats">
+        <tuplizer class="org.codeandmagic.protobuf2hibernate.ProtobufTuplizer" entity-mode="pojo" />
+        <id name="uuid" type="string" />
+        <property name="name" />
+        <property name="hairLength" />
+        <property name="created" />
+        <bag name="kittens" table="cat_kittens">
+            <key column="cat_uuid" foreign-key="uuid" />
+            <element type="string" column="val" />
+        </bag>
+    </class>
+</hibernate-mapping>

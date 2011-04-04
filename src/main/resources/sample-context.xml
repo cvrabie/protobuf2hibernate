@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+	   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <bean id="persistence-hibernate-property-configurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="location" value="classpath:jdbc.properties" />
+	</bean>
+
+    <bean id="data-source" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+       <property name="driverClassName" value="${jdbc.driverClassName}"/>
+       <property name="url" value="${jdbc.url}"/>
+       <property name="username" value="${jdbc.username}"/>
+       <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <!--<bean id="session-factory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="data-source" />
+        <property name="configLocation" value="classpath:hibernate.cfg.xml" />
+        <property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.show_sql">${hibernate.debug.showSql}</prop>
+				<prop key="hibernate.format_sql">${hibernate.debug.formatSql}</prop>
+			</props>
+		</property>
+    </bean>-->
+
+    <bean id="session-factory-protobuf" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="data-source" />
+        <property name="configLocation" value="classpath:hibernate-protobuf.cfg.xml" />
+        <property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.show_sql">${hibernate.debug.showSql}</prop>
+				<prop key="hibernate.format_sql">${hibernate.debug.formatSql}</prop>
+			</props>
+		</property>
+        <property name="eventListeners"><map>
+            <entry key="save-update"><bean class="org.codeandmagic.protobuf2hibernate.ProtobufSaveOrUpdateEventListener" /></entry>
+            <entry key="save"><bean class="org.codeandmagic.protobuf2hibernate.ProtobufSaveEventListener" /></entry>
+        </map></property>
+    </bean>
+
+    <bean id="txManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="session-factory-protobuf" />
+	</bean>
+
+    <tx:annotation-driven transaction-manager="txManager" />
+
+    <!--<bean name="dog-dao" class="org.codeandmagic.protobuf2hibernate.sample.DogDao">
+        <property name="sessionFactory" ref="session-factory" />
+    </bean>-->
+    
+    <bean name="cat-dao" class="org.codeandmagic.protobuf2hibernate.sample.CatDao">
+        <property name="sessionFactory" ref="session-factory-protobuf" />
+    </bean>
+
+</beans>
