@@ -21,11 +21,11 @@ public final class Descriptor_Cat {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\014sample.proto\022\006domain\"X\n\003Cat\022\014\n\004uuid\030\001 " +
-      "\002(\t\022\017\n\007created\030\002 \002(\003\022\014\n\004name\030\003 \002(\t\022\023\n\013ha" +
-      "ir_length\030\004 \001(\002\022\017\n\007kittens\030\005 \003(\tB@\n*org." +
-      "codeandmagic.protobuf2hibernate.sampleB\016" +
-      "Descriptor_CatH\001P\001"
+      "\n\014sample.proto\022\006domain\"W\n\003Cat\022\014\n\004uuid\030\001 " +
+      "\002(\t\022\017\n\007created\030\002 \002(\003\022\014\n\004name\030\003 \002(\t\022\022\n\nha" +
+      "irLength\030\004 \001(\002\022\017\n\007kittens\030\005 \003(\tB@\n*org.c" +
+      "odeandmagic.protobuf2hibernate.sampleB\016D" +
+      "escriptor_CatH\001P\001"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {

@@ -38,10 +38,10 @@ public class App {
                 .build();
         cd.save(c);
 
-        List<Cat.Builder> cb = cd.getByName("Eve");
+        List<Cat> cb = cd.getByName("Eve");
         System.out.print(cb);
 
-        System.out.print(cb.get(0).build());
+        System.out.print(cb.get(0));
 
     }
 }

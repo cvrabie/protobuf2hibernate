@@ -10,6 +10,6 @@ message Cat {
 	required int64 created = 2;
 	required string name = 3;
 
-	optional float hair_length = 4;
+	optional float hairLength = 4;
 	repeated string kittens = 5;
  }

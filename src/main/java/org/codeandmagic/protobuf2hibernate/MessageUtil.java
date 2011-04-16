@@ -1,5 +1,6 @@
 package org.codeandmagic.protobuf2hibernate;
 
+import com.google.protobuf.Descriptors;
 import com.google.protobuf.Message;
 
 import java.io.InputStream;
@@ -22,5 +23,25 @@ public class MessageUtil {
         Method m = type.getDeclaredMethod(methodName, new Class<?>[0]);
 		m.setAccessible(true);
         return m;
+    }
+
+    public static Class<? extends Message.Builder> builderClassFromMessageClass(Class<? extends Message> messageClass)
+            throws ClassNotFoundException {
+        return (Class<? extends Message.Builder>) Class.forName(messageClass.getName()+"$Builder");
+    }
+
+    public static Class<? extends Message> messageClassForBuilderClass(Class<? extends Message.Builder> builderClass)
+            throws ClassNotFoundException {
+        return (Class<? extends Message>) Class.forName(builderClass.getName().substring(0, builderClass.getName().indexOf("$")));
+    }
+
+    public static Descriptors.Descriptor getDescriptorForMessageClass(Class<? extends Message> type)
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        return (Descriptors.Descriptor) getMethod(type,"getDescriptor").invoke(null);
+    }
+
+    public static Descriptors.Descriptor getDescriptorForBuilderClass(Class<? extends Message.Builder> type)
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
+        return getDescriptorForMessageClass(messageClassForBuilderClass(type));
     }
 }

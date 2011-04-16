@@ -11,7 +11,7 @@ P=$PWD
 J=$P/../java
 
 PROTO_PATH=$P
-INC0=$(dirname "$PROTOBUF_COMPILER")
+INC0=$(dirname "$PC")
 if test -d $INC0/google/protobuf/; then PROTO_PATH=$PROTO_PATH:$INC0; fi
 INC0=/usr/local/include/
 if test -d $INC0/google/protobuf/; then PROTO_PATH=$PROTO_PATH:$INC0; fi

@@ -41,10 +41,6 @@
 				<prop key="hibernate.format_sql">${hibernate.debug.formatSql}</prop>
 			</props>
 		</property>
-        <property name="eventListeners"><map>
-            <entry key="save-update"><bean class="org.codeandmagic.protobuf2hibernate.ProtobufSaveOrUpdateEventListener" /></entry>
-            <entry key="save"><bean class="org.codeandmagic.protobuf2hibernate.ProtobufSaveEventListener" /></entry>
-        </map></property>
     </bean>
 
     <bean id="txManager"

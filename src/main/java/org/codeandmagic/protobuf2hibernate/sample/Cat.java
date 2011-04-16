@@ -47,8 +47,8 @@ public  final class Cat extends
   public boolean hasName() { return hasName; }
   public java.lang.String getName() { return name_; }
   
-  // optional float hair_length = 4;
-  public static final int HAIR_LENGTH_FIELD_NUMBER = 4;
+  // optional float hairLength = 4;
+  public static final int HAIRLENGTH_FIELD_NUMBER = 4;
   private boolean hasHairLength;
   private float hairLength_ = 0F;
   public boolean hasHairLength() { return hasHairLength; }
@@ -448,7 +448,7 @@ public  final class Cat extends
       return this;
     }
     
-    // optional float hair_length = 4;
+    // optional float hairLength = 4;
     public boolean hasHairLength() {
       return result.hasHairLength();
     }
