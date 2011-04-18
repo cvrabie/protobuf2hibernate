@@ -2,6 +2,10 @@
 Protobuf2Hibernate is meant to allow you to directly persist [[http://code.google.com/p/protobuf/][Protobuf]] generated
 messages with [[http://www.hibernate.org/][Hibernate]].
 
+** Warning!
+This is still in early development. There are still some things that don't work propertly, like cascading of associated
+Message entities. Bear with me!
+
 ** Why?
 As you know, Hibernate has some requirements about the form of the persisted objects. For example it needs an accessible
 empty constructor and access to the fields of the object, usually through getters and setters.
