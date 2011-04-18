@@ -1,0 +1,10 @@
+package domain;
+
+option optimize_for = SPEED;
+option java_package = "org.codeandmagic.protobuf2hibernate.sample";
+option java_outer_classname = "Descriptor_Person";
+option java_multiple_files = true;
+
+message Person {
+ 	required string name = 2;
+ }

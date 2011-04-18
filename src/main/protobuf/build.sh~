@@ -16,7 +16,7 @@ if test -d $INC0/google/protobuf/; then PROTO_PATH=$PROTO_PATH:$INC0; fi
 INC0=/usr/local/include/
 if test -d $INC0/google/protobuf/; then PROTO_PATH=$PROTO_PATH:$INC0; fi
 
-for p in cat person; do
+for p in sample; do
 #for p in integrationgroup; do
 	$PC --java_out=$J --proto_path=$PROTO_PATH $P/$p.proto
 done

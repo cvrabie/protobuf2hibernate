@@ -19,10 +19,14 @@ public class MessageUtil {
 		return (TB) getMethod(type,"newBuilder").invoke(null);
 	}
 
-    private static Method getMethod(Class<?> type, String methodName) throws NoSuchMethodException {
-        Method m = type.getDeclaredMethod(methodName, new Class<?>[0]);
+    private static Method getMethod(Class<?> type, String methodName, Class<?>[] parameterTypes) throws NoSuchMethodException {
+        Method m = type.getDeclaredMethod(methodName, parameterTypes);
 		m.setAccessible(true);
         return m;
+    }
+
+    private static Method getMethod(Class<?> type, String methodName) throws NoSuchMethodException {
+        return getMethod(type, methodName, new Class<?>[0]);
     }
 
     public static Class<? extends Message.Builder> builderClassFromMessageClass(Class<? extends Message> messageClass)
@@ -43,5 +47,11 @@ public class MessageUtil {
     public static Descriptors.Descriptor getDescriptorForBuilderClass(Class<? extends Message.Builder> type)
             throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException {
         return getDescriptorForMessageClass(messageClassForBuilderClass(type));
+    }
+
+    private final static Class<?>[] parametersForParseFrom = new Class<?>[] {byte[].class};
+    public static <T extends Message> T deserialize(Class<T> messageType, byte[] bytes )
+            throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        return (T) getMethod(messageType, "parseFrom", parametersForParseFrom).invoke(null, bytes);
     }
 }

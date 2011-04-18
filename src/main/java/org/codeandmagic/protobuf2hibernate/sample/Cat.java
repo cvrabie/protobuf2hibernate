@@ -66,6 +66,13 @@ public  final class Cat extends
     return kittens_.get(index);
   }
   
+  // optional .domain.Person owner = 6;
+  public static final int OWNER_FIELD_NUMBER = 6;
+  private boolean hasOwner;
+  private org.codeandmagic.protobuf2hibernate.sample.Person owner_ = org.codeandmagic.protobuf2hibernate.sample.Person.getDefaultInstance();
+  public boolean hasOwner() { return hasOwner; }
+  public org.codeandmagic.protobuf2hibernate.sample.Person getOwner() { return owner_; }
+  
   public boolean equals(Object otherObject) {
     if (otherObject == this) return true;
     if (!(otherObject instanceof Cat)) return false;
@@ -96,6 +103,12 @@ public  final class Cat extends
       if (other.hasHairLength) return false;
     }
     if (!kittens_.equals(other.kittens_)) return false;
+    if (hasOwner) {
+      if (!other.hasOwner) return false;
+      if (!owner_.equals(other.owner_)) return false;
+    } else {
+      if (other.hasOwner) return false;
+    }
     return getUnknownFields().equals(other.getUnknownFields());
   }
   public boolean super_equals(final Object otherObject) { return super.equals(otherObject); }
@@ -113,6 +126,9 @@ public  final class Cat extends
     if (!hasUuid) return false;
     if (!hasCreated) return false;
     if (!hasName) return false;
+    if (hasOwner()) {
+      if (!getOwner().isInitialized()) return false;
+    }
     return true;
   }
   
@@ -132,6 +148,9 @@ public  final class Cat extends
     }
     for (java.lang.String element : getKittensList()) {
       output.writeString(5, element);
+    }
+    if (hasOwner()) {
+      output.writeMessage(6, getOwner());
     }
     getUnknownFields().writeTo(output);
   }
@@ -166,6 +185,10 @@ public  final class Cat extends
       }
       size += dataSize;
       size += 1 * getKittensList().size();
+    }
+    if (hasOwner()) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(6, getOwner());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSerializedSize = size;
@@ -338,6 +361,9 @@ public  final class Cat extends
         }
         result.kittens_.addAll(other.kittens_);
       }
+      if (other.hasOwner()) {
+        mergeOwner(other.getOwner());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       return this;
     }
@@ -381,6 +407,15 @@ public  final class Cat extends
           }
           case 42: {
             addKittens(input.readString());
+            break;
+          }
+          case 50: {
+            org.codeandmagic.protobuf2hibernate.sample.Person.Builder subBuilder = org.codeandmagic.protobuf2hibernate.sample.Person.newBuilder();
+            if (hasOwner()) {
+              subBuilder.mergeFrom(getOwner());
+            }
+            input.readMessage(subBuilder, extensionRegistry);
+            setOwner(subBuilder.buildPartial());
             break;
           }
         }
@@ -503,6 +538,43 @@ public  final class Cat extends
     }
     public Builder clearKittens() {
       result.kittens_ = java.util.Collections.emptyList();
+      return this;
+    }
+    
+    // optional .domain.Person owner = 6;
+    public boolean hasOwner() {
+      return result.hasOwner();
+    }
+    public org.codeandmagic.protobuf2hibernate.sample.Person getOwner() {
+      return result.getOwner();
+    }
+    public Builder setOwner(org.codeandmagic.protobuf2hibernate.sample.Person value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      result.hasOwner = true;
+      result.owner_ = value;
+      return this;
+    }
+    public Builder setOwner(org.codeandmagic.protobuf2hibernate.sample.Person.Builder builderForValue) {
+      result.hasOwner = true;
+      result.owner_ = builderForValue.build();
+      return this;
+    }
+    public Builder mergeOwner(org.codeandmagic.protobuf2hibernate.sample.Person value) {
+      if (result.hasOwner() &&
+          result.owner_ != org.codeandmagic.protobuf2hibernate.sample.Person.getDefaultInstance()) {
+        result.owner_ =
+          org.codeandmagic.protobuf2hibernate.sample.Person.newBuilder(result.owner_).mergeFrom(value).buildPartial();
+      } else {
+        result.owner_ = value;
+      }
+      result.hasOwner = true;
+      return this;
+    }
+    public Builder clearOwner() {
+      result.hasOwner = false;
+      result.owner_ = org.codeandmagic.protobuf2hibernate.sample.Person.getDefaultInstance();
       return this;
     }
   }

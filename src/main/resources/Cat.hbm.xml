@@ -4,6 +4,10 @@
         "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
+    <typedef class="org.codeandmagic.protobuf2hibernate.MessageToByteArray" name="InnerMessage">
+        <param name="messageType">org.codeandmagic.protobuf2hibernate.sample.Person</param>
+    </typedef>
+
     <class name="org.codeandmagic.protobuf2hibernate.sample.Cat$Builder" table="cats">
         <tuplizer class="org.codeandmagic.protobuf2hibernate.ProtobufTuplizer" entity-mode="pojo" />
         <id name="uuid" type="string" />
@@ -14,5 +18,6 @@
             <key column="cat_uuid" foreign-key="uuid" />
             <element type="string" column="val" />
         </bag>
+        <property name="owner" type="InnerMessage" />
     </class>
 </hibernate-mapping>

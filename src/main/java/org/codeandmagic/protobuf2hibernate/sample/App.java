@@ -35,6 +35,7 @@ public class App {
                 .setUuid(UUID.randomUUID().toString())
                 .setHairLength(2.31f)
                 .addAllKittens(Arrays.asList(new String[]{"Caty","Nutty"}))
+                .setOwner(Person.newBuilder().setName("CatOwner").build())
                 .build();
         cd.save(c);
 

@@ -2,16 +2,16 @@
 
 package org.codeandmagic.protobuf2hibernate.sample;
 
-public final class Descriptor_Cat {
-  private Descriptor_Cat() {}
+public final class Descriptor_Person {
+  private Descriptor_Person() {}
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistry registry) {
   }
   static com.google.protobuf.Descriptors.Descriptor
-    internal_static_domain_Cat_descriptor;
+    internal_static_domain_Person_descriptor;
   static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_domain_Cat_fieldAccessorTable;
+      internal_static_domain_Person_fieldAccessorTable;
   
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -21,33 +21,29 @@ public final class Descriptor_Cat {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\tcat.proto\022\006domain\032\014person.proto\"v\n\003Cat" +
-      "\022\014\n\004uuid\030\001 \002(\t\022\017\n\007created\030\002 \002(\003\022\014\n\004name\030" +
-      "\003 \002(\t\022\022\n\nhairLength\030\004 \001(\002\022\017\n\007kittens\030\005 \003" +
-      "(\t\022\035\n\005owner\030\006 \001(\0132\016.domain.PersonB@\n*org" +
-      ".codeandmagic.protobuf2hibernate.sampleB" +
-      "\016Descriptor_CatH\001P\001"
+      "\n\014person.proto\022\006domain\"\026\n\006Person\022\014\n\004name" +
+      "\030\002 \002(\tBC\n*org.codeandmagic.protobuf2hibe" +
+      "rnate.sampleB\021Descriptor_PersonH\001P\001"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
         public com.google.protobuf.ExtensionRegistry assignDescriptors(
             com.google.protobuf.Descriptors.FileDescriptor root) {
           descriptor = root;
-          internal_static_domain_Cat_descriptor =
+          internal_static_domain_Person_descriptor =
             getDescriptor().getMessageTypes().get(0);
-          internal_static_domain_Cat_fieldAccessorTable = new
+          internal_static_domain_Person_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-              internal_static_domain_Cat_descriptor,
-              new java.lang.String[] { "Uuid", "Created", "Name", "HairLength", "Kittens", "Owner", },
-              org.codeandmagic.protobuf2hibernate.sample.Cat.class,
-              org.codeandmagic.protobuf2hibernate.sample.Cat.Builder.class);
+              internal_static_domain_Person_descriptor,
+              new java.lang.String[] { "Name", },
+              org.codeandmagic.protobuf2hibernate.sample.Person.class,
+              org.codeandmagic.protobuf2hibernate.sample.Person.Builder.class);
           return null;
         }
       };
     com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          org.codeandmagic.protobuf2hibernate.sample.Descriptor_Person.getDescriptor(),
         }, assigner);
   }
   

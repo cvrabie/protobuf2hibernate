@@ -5,6 +5,8 @@ option java_package = "org.codeandmagic.protobuf2hibernate.sample";
 option java_outer_classname = "Descriptor_Cat";
 option java_multiple_files = true;
 
+import "person.proto";
+
 message Cat {
  	required string uuid = 1;
 	required int64 created = 2;
@@ -12,4 +14,6 @@ message Cat {
 
 	optional float hairLength = 4;
 	repeated string kittens = 5;
+
+	optional Person owner = 6;
  }
