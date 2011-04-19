@@ -98,19 +98,17 @@ public class ProtobufTransformerSession implements Session {
 
     @Override
     public Serializable getIdentifier(Object object) throws HibernateException {
-        //TODO
         return getNativeSession().getIdentifier(protobufMessageToBuilder(object));
     }
 
     @Override
     public boolean contains(Object object) {
-        //TODO
-        return false;
+        return getNativeSession().contains(object);
     }
 
     @Override
     public void evict(Object object) throws HibernateException {
-        //TODO
+        getNativeSession().evict(object);
     }
 
     @Override

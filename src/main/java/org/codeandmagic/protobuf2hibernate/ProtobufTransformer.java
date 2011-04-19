@@ -38,7 +38,8 @@ public class ProtobufTransformer {
                     "Found "+object.getClass().getName()+" instead.");
         try{
             Message.Builder builder = (Message.Builder) object;
-            return builder.build();
+            //CLONE SO WE MAKE SURE THE BUILDER STAYS INTACT //TODO: in protobuf 2.4? this should happend by default
+            return builder.clone().build();
         }catch (Exception e){
             throw new HibernateException("Could not convert Message.Builder to Message");
         }

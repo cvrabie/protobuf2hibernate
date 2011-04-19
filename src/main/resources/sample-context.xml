@@ -53,7 +53,7 @@
 		<property name="sessionFactory" ref="session-factory-protobuf" />
 	</bean>
 
-    <tx:annotation-driven transaction-manager="txManager" proxy-target-class="false" />
+    <tx:annotation-driven transaction-manager="txManager" proxy-target-class="true" />
 
     <!--<bean name="dog-dao" class="org.codeandmagic.protobuf2hibernate.sample.DogDao">
         <property name="sessionFactory" ref="session-factory" />

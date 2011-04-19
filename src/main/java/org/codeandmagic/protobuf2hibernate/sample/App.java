@@ -32,13 +32,15 @@ public class App {
         Cat c1 = Cat.newBuilder()
                 .setUuid(UUID.randomUUID().toString())
                 .setName("FriendOfEve")
-                .setCreated(System.currentTimeMillis())
+                .setCreated(98L)
+                .setHairLength(2f)
                 .build();
 
         Cat c2 = Cat.newBuilder()
                 .setUuid(UUID.randomUUID().toString())
                 .setName("FriendOfEve2")
-                .setCreated(System.currentTimeMillis())
+                .setCreated(99L)
+                .setHairLength(1f)
                 .build();
 
 

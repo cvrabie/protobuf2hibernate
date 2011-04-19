@@ -6,11 +6,16 @@ import org.apache.commons.collections.iterators.ObjectGraphIterator;
 import org.hibernate.EntityMode;
 import org.hibernate.EntityNameResolver;
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.engine.EntityKey;
+import org.hibernate.engine.PersistenceContext;
 import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.engine.SessionImplementor;
+import org.hibernate.impl.SessionImpl;
 import org.hibernate.mapping.MetaAttribute;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
+import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.property.Getter;
 import org.hibernate.tuple.entity.EntityMetamodel;
 import org.hibernate.tuple.entity.EntityTuplizer;
@@ -120,19 +125,38 @@ public class ProtobufTuplizer implements EntityTuplizer{
             if(!field.isRepeated()){//NORMAL FIELD
                 if(!msg.hasField(field)) return null;
                 final Object value = msg.getField(field);
-                return shouldTransform ? ProtobufTransformer.protobufMessageToBuilder(value) : value;
+                return shouldTransform ? transformMessageToBuilder((Message)value) : value;
             }else{//REPEATED
-                final int count = msg.getRepeatedFieldCount(field);
-                final Object[] result = new Object[count];
-                for(int i=0; i<count; ++i){
-                    final Object val = msg.getRepeatedField(field, i);
-                    result[i] = shouldTransform ? ProtobufTransformer.protobufMessageToBuilder(val) : val;
-                }
-                return Arrays.asList(result);
+                final Collection<?> value = (Collection<?>)msg.getField(field);
+                return shouldTransform ? transformCollectionToBuilders(value) : value;
             }
         }else{
             throw new HibernateException("Can only handle protobuf Message.Builder");
         }
+    }
+
+    private Object transformMessageToBuilder(Message val){
+        SessionImpl session = (SessionImpl)entityMetamodel.getSessionFactory().getCurrentSession();
+        PersistenceContext context = session.getPersistenceContext();
+        EntityPersister persister = entityMetamodel.getSessionFactory().getEntityPersister(entityMetamodel.getName());
+        EntityKey key = new EntityKey(getIdentifierForMessage(val), persister, session.getEntityMode());
+
+        //context.removeEntity(key);
+        //return ProtobufTransformer.protobufMessageToBuilder(val);
+
+        Object entityInContext = context.getEntity(key);
+        if(null == entityInContext) return ProtobufTransformer.protobufMessageToBuilder(val);
+        else return entityInContext;
+    }
+
+    private Object transformCollectionToBuilders(Collection<?> value){
+        final int count = value.size();
+        final Object[] result = new Object[count];
+        int i = 0;
+        for(Message val : (Collection<Message>)value){
+            result[i++] = transformMessageToBuilder(val);
+        }
+        return Arrays.asList(result);
     }
 
     @Override
@@ -177,9 +201,9 @@ public class ProtobufTuplizer implements EntityTuplizer{
                                   final Object value) throws HibernateException {
         if(!(entity instanceof Message.Builder)) throw new HibernateException("Can only handle protobuf Message.Builder");
         final Object valueToSet =   Descriptors.FieldDescriptor.Type.MESSAGE == field.getType() ?
-                                        field.isRepeated() ?
+                                        (field.isRepeated() ?
                                         ProtobufTransformer.protobufBuilderToMessage((Collection<?>)value) :
-                                        ProtobufTransformer.protobufBuilderToMessage(value) :
+                                        ProtobufTransformer.protobufBuilderToMessage(value) ) :
                                     value;
         if(null != value) ((Message.Builder)entity).setField(field, valueToSet);
     }
@@ -206,6 +230,17 @@ public class ProtobufTuplizer implements EntityTuplizer{
         assert idValue instanceof Serializable;
         return (Serializable) idValue;
     }
+
+    private Serializable getIdentifierForMessage(Message val) {
+        if(null == idPropertyName){
+            throw new HibernateException("This entity has no mapped id!");
+        }
+        Descriptors.FieldDescriptor field = fieldCacheByName.get(idPropertyName);
+        Object idValue = val.getField(field);
+        assert idValue instanceof Serializable;
+        return (Serializable) idValue;
+    }
+
 
     @Override
     public void setIdentifier(final Object entity, final Serializable id) throws HibernateException{
