@@ -29,6 +29,19 @@ public class App {
         System.out.print("======>"+d.getUuid());
         */
 
+        Cat c1 = Cat.newBuilder()
+                .setUuid(UUID.randomUUID().toString())
+                .setName("FriendOfEve")
+                .setCreated(System.currentTimeMillis())
+                .build();
+
+        Cat c2 = Cat.newBuilder()
+                .setUuid(UUID.randomUUID().toString())
+                .setName("FriendOfEve2")
+                .setCreated(System.currentTimeMillis())
+                .build();
+
+
         Cat c = Cat.newBuilder()
                 .setName("Eve")
                 .setCreated(100L)
@@ -36,6 +49,8 @@ public class App {
                 .setHairLength(2.31f)
                 .addAllKittens(Arrays.asList(new String[]{"Caty","Nutty"}))
                 .setOwner(Person.newBuilder().setName("CatOwner").build())
+                .addFriends(c1)
+                .addFriends(c2)
                 .build();
         cd.save(c);
 

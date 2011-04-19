@@ -4,6 +4,7 @@ import com.google.protobuf.Message;
 import org.hibernate.HibernateException;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class ProtobufTransformer {
@@ -52,11 +53,11 @@ public class ProtobufTransformer {
         }
     }
 
-    public static List<Message> protobufBuilderToMessage(List<?> list){
-        int size = list.size();
-        Message[] transformed = new Message[size];
-        for(int i=0;i<size;++i){
-            transformed[i] = protobufBuilderToMessage(list.get(i));
+    public static List<Message> protobufBuilderToMessage(Collection<?> collection){
+        final Message[] transformed = new Message[collection.size()];
+        int i = 0;
+        for(Object o : collection){
+            transformed[i++] = protobufBuilderToMessage(o);
         }
         return Arrays.asList(transformed);
     }

@@ -399,4 +399,14 @@ public abstract class WrappedQuery implements Query {
     public Query setResultTransformer(ResultTransformer transformer) {
         return thisOrNewLikeMe(wrapped.setResultTransformer(transformer));
     }
+
+    @Override
+    public boolean isReadOnly() {
+        return wrapped.isReadOnly();
+    }
+
+    @Override
+    public Query setLockOptions(LockOptions lockOptions) {
+        return thisOrNewLikeMe(setLockOptions(lockOptions));
+    }
 }

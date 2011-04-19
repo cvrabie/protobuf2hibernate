@@ -158,4 +158,29 @@ public abstract class WrappedCriteria implements Criteria {
     public Object uniqueResult() throws HibernateException {
         return wrapped.uniqueResult();
     }
+
+    @Override
+    public Criteria createAlias(String s, String s1, int i, Criterion criterion) throws HibernateException {
+        return thisOrNewLikeMe(wrapped.createAlias(s, s1, i, criterion));
+    }
+
+    @Override
+    public Criteria createCriteria(String s, String s1, int i, Criterion criterion) throws HibernateException {
+        return thisOrNewLikeMe(wrapped.createCriteria(s, s1, i, criterion));
+    }
+
+    @Override
+    public boolean isReadOnlyInitialized() {
+        return wrapped.isReadOnlyInitialized();
+    }
+
+    @Override
+    public boolean isReadOnly() {
+        return wrapped.isReadOnly();
+    }
+
+    @Override
+    public Criteria setReadOnly(boolean b) {
+        return thisOrNewLikeMe(wrapped.setReadOnly(b));
+    }
 }

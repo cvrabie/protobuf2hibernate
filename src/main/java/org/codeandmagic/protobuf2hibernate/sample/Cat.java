@@ -73,6 +73,30 @@ public  final class Cat extends
   public boolean hasOwner() { return hasOwner; }
   public org.codeandmagic.protobuf2hibernate.sample.Person getOwner() { return owner_; }
   
+  // repeated .domain.Cat friends = 7;
+  public static final int FRIENDS_FIELD_NUMBER = 7;
+  private java.util.List<org.codeandmagic.protobuf2hibernate.sample.Cat> friends_ =
+    java.util.Collections.emptyList();
+  public java.util.List<org.codeandmagic.protobuf2hibernate.sample.Cat> getFriendsList() {
+    return friends_;
+  }
+  public int getFriendsCount() { return friends_.size(); }
+  public org.codeandmagic.protobuf2hibernate.sample.Cat getFriends(int index) {
+    return friends_.get(index);
+  }
+  
+  // repeated .domain.Toy toys = 8;
+  public static final int TOYS_FIELD_NUMBER = 8;
+  private java.util.List<org.codeandmagic.protobuf2hibernate.sample.Toy> toys_ =
+    java.util.Collections.emptyList();
+  public java.util.List<org.codeandmagic.protobuf2hibernate.sample.Toy> getToysList() {
+    return toys_;
+  }
+  public int getToysCount() { return toys_.size(); }
+  public org.codeandmagic.protobuf2hibernate.sample.Toy getToys(int index) {
+    return toys_.get(index);
+  }
+  
   public boolean equals(Object otherObject) {
     if (otherObject == this) return true;
     if (!(otherObject instanceof Cat)) return false;
@@ -109,6 +133,8 @@ public  final class Cat extends
     } else {
       if (other.hasOwner) return false;
     }
+    if (!friends_.equals(other.friends_)) return false;
+    if (!toys_.equals(other.toys_)) return false;
     return getUnknownFields().equals(other.getUnknownFields());
   }
   public boolean super_equals(final Object otherObject) { return super.equals(otherObject); }
@@ -128,6 +154,12 @@ public  final class Cat extends
     if (!hasName) return false;
     if (hasOwner()) {
       if (!getOwner().isInitialized()) return false;
+    }
+    for (org.codeandmagic.protobuf2hibernate.sample.Cat element : getFriendsList()) {
+      if (!element.isInitialized()) return false;
+    }
+    for (org.codeandmagic.protobuf2hibernate.sample.Toy element : getToysList()) {
+      if (!element.isInitialized()) return false;
     }
     return true;
   }
@@ -151,6 +183,12 @@ public  final class Cat extends
     }
     if (hasOwner()) {
       output.writeMessage(6, getOwner());
+    }
+    for (org.codeandmagic.protobuf2hibernate.sample.Cat element : getFriendsList()) {
+      output.writeMessage(7, element);
+    }
+    for (org.codeandmagic.protobuf2hibernate.sample.Toy element : getToysList()) {
+      output.writeMessage(8, element);
     }
     getUnknownFields().writeTo(output);
   }
@@ -189,6 +227,14 @@ public  final class Cat extends
     if (hasOwner()) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(6, getOwner());
+    }
+    for (org.codeandmagic.protobuf2hibernate.sample.Cat element : getFriendsList()) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(7, element);
+    }
+    for (org.codeandmagic.protobuf2hibernate.sample.Toy element : getToysList()) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeMessageSize(8, element);
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSerializedSize = size;
@@ -327,6 +373,14 @@ public  final class Cat extends
         result.kittens_ =
           java.util.Collections.unmodifiableList(result.kittens_);
       }
+      if (result.friends_ != java.util.Collections.EMPTY_LIST) {
+        result.friends_ =
+          java.util.Collections.unmodifiableList(result.friends_);
+      }
+      if (result.toys_ != java.util.Collections.EMPTY_LIST) {
+        result.toys_ =
+          java.util.Collections.unmodifiableList(result.toys_);
+      }
       org.codeandmagic.protobuf2hibernate.sample.Cat returnMe = result;
       result = null;
       return returnMe;
@@ -363,6 +417,18 @@ public  final class Cat extends
       }
       if (other.hasOwner()) {
         mergeOwner(other.getOwner());
+      }
+      if (!other.friends_.isEmpty()) {
+        if (result.friends_.isEmpty()) {
+          result.friends_ = new java.util.ArrayList<org.codeandmagic.protobuf2hibernate.sample.Cat>();
+        }
+        result.friends_.addAll(other.friends_);
+      }
+      if (!other.toys_.isEmpty()) {
+        if (result.toys_.isEmpty()) {
+          result.toys_ = new java.util.ArrayList<org.codeandmagic.protobuf2hibernate.sample.Toy>();
+        }
+        result.toys_.addAll(other.toys_);
       }
       this.mergeUnknownFields(other.getUnknownFields());
       return this;
@@ -416,6 +482,18 @@ public  final class Cat extends
             }
             input.readMessage(subBuilder, extensionRegistry);
             setOwner(subBuilder.buildPartial());
+            break;
+          }
+          case 58: {
+            org.codeandmagic.protobuf2hibernate.sample.Cat.Builder subBuilder = org.codeandmagic.protobuf2hibernate.sample.Cat.newBuilder();
+            input.readMessage(subBuilder, extensionRegistry);
+            addFriends(subBuilder.buildPartial());
+            break;
+          }
+          case 66: {
+            org.codeandmagic.protobuf2hibernate.sample.Toy.Builder subBuilder = org.codeandmagic.protobuf2hibernate.sample.Toy.newBuilder();
+            input.readMessage(subBuilder, extensionRegistry);
+            addToys(subBuilder.buildPartial());
             break;
           }
         }
@@ -575,6 +653,108 @@ public  final class Cat extends
     public Builder clearOwner() {
       result.hasOwner = false;
       result.owner_ = org.codeandmagic.protobuf2hibernate.sample.Person.getDefaultInstance();
+      return this;
+    }
+    
+    // repeated .domain.Cat friends = 7;
+    public java.util.List<org.codeandmagic.protobuf2hibernate.sample.Cat> getFriendsList() {
+      return java.util.Collections.unmodifiableList(result.friends_);
+    }
+    public int getFriendsCount() {
+      return result.getFriendsCount();
+    }
+    public org.codeandmagic.protobuf2hibernate.sample.Cat getFriends(int index) {
+      return result.getFriends(index);
+    }
+    public Builder setFriends(int index, org.codeandmagic.protobuf2hibernate.sample.Cat value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      result.friends_.set(index, value);
+      return this;
+    }
+    public Builder setFriends(int index, org.codeandmagic.protobuf2hibernate.sample.Cat.Builder builderForValue) {
+      result.friends_.set(index, builderForValue.build());
+      return this;
+    }
+    public Builder addFriends(org.codeandmagic.protobuf2hibernate.sample.Cat value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      if (result.friends_.isEmpty()) {
+        result.friends_ = new java.util.ArrayList<org.codeandmagic.protobuf2hibernate.sample.Cat>();
+      }
+      result.friends_.add(value);
+      return this;
+    }
+    public Builder addFriends(org.codeandmagic.protobuf2hibernate.sample.Cat.Builder builderForValue) {
+      if (result.friends_.isEmpty()) {
+        result.friends_ = new java.util.ArrayList<org.codeandmagic.protobuf2hibernate.sample.Cat>();
+      }
+      result.friends_.add(builderForValue.build());
+      return this;
+    }
+    public Builder addAllFriends(
+        java.lang.Iterable<? extends org.codeandmagic.protobuf2hibernate.sample.Cat> values) {
+      if (result.friends_.isEmpty()) {
+        result.friends_ = new java.util.ArrayList<org.codeandmagic.protobuf2hibernate.sample.Cat>();
+      }
+      super.addAll(values, result.friends_);
+      return this;
+    }
+    public Builder clearFriends() {
+      result.friends_ = java.util.Collections.emptyList();
+      return this;
+    }
+    
+    // repeated .domain.Toy toys = 8;
+    public java.util.List<org.codeandmagic.protobuf2hibernate.sample.Toy> getToysList() {
+      return java.util.Collections.unmodifiableList(result.toys_);
+    }
+    public int getToysCount() {
+      return result.getToysCount();
+    }
+    public org.codeandmagic.protobuf2hibernate.sample.Toy getToys(int index) {
+      return result.getToys(index);
+    }
+    public Builder setToys(int index, org.codeandmagic.protobuf2hibernate.sample.Toy value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      result.toys_.set(index, value);
+      return this;
+    }
+    public Builder setToys(int index, org.codeandmagic.protobuf2hibernate.sample.Toy.Builder builderForValue) {
+      result.toys_.set(index, builderForValue.build());
+      return this;
+    }
+    public Builder addToys(org.codeandmagic.protobuf2hibernate.sample.Toy value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      if (result.toys_.isEmpty()) {
+        result.toys_ = new java.util.ArrayList<org.codeandmagic.protobuf2hibernate.sample.Toy>();
+      }
+      result.toys_.add(value);
+      return this;
+    }
+    public Builder addToys(org.codeandmagic.protobuf2hibernate.sample.Toy.Builder builderForValue) {
+      if (result.toys_.isEmpty()) {
+        result.toys_ = new java.util.ArrayList<org.codeandmagic.protobuf2hibernate.sample.Toy>();
+      }
+      result.toys_.add(builderForValue.build());
+      return this;
+    }
+    public Builder addAllToys(
+        java.lang.Iterable<? extends org.codeandmagic.protobuf2hibernate.sample.Toy> values) {
+      if (result.toys_.isEmpty()) {
+        result.toys_ = new java.util.ArrayList<org.codeandmagic.protobuf2hibernate.sample.Toy>();
+      }
+      super.addAll(values, result.toys_);
+      return this;
+    }
+    public Builder clearToys() {
+      result.toys_ = java.util.Collections.emptyList();
       return this;
     }
   }

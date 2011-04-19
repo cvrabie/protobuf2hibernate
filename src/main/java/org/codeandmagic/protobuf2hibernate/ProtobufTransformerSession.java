@@ -1,6 +1,8 @@
 package org.codeandmagic.protobuf2hibernate;
 
 import org.hibernate.*;
+import org.hibernate.event.EventSource;
+import org.hibernate.impl.SessionImpl;
 import org.hibernate.jdbc.Work;
 import org.hibernate.stat.SessionStatistics;
 
@@ -10,7 +12,7 @@ import java.sql.Connection;
 import static org.codeandmagic.protobuf2hibernate.ProtobufTransformer.*;
 
 public class ProtobufTransformerSession implements Session {
-    private SessionFactory sessionFactory;
+    private final SessionFactory sessionFactory;
 
     public ProtobufTransformerSession(SessionFactory sessionFactory){
         this.sessionFactory = sessionFactory;
@@ -18,6 +20,10 @@ public class ProtobufTransformerSession implements Session {
 
     public Session getNativeSession(){
         return sessionFactory.getCurrentSession();
+    }
+
+    public EventSource getNativeEventSource(){
+        return (SessionImpl)getNativeSession();
     }
 
     @Override
@@ -369,5 +375,67 @@ public class ProtobufTransformerSession implements Session {
     @Override
     public void reconnect(Connection connection) throws HibernateException {
         getNativeSession().reconnect(connection);
+    }
+
+    @Override
+    public boolean isDefaultReadOnly() {
+        return getNativeSession().isDefaultReadOnly();
+    }
+
+    @Override
+    public void setDefaultReadOnly(boolean b) {
+        getNativeSession().isDefaultReadOnly();
+    }
+
+    @Override
+    public Object load(Class aClass, Serializable serializable, LockOptions lockOptions) throws HibernateException {
+        return protobufBuilderToMessage(getNativeSession().load(protobufBuilderClassFromMessageClass(aClass),serializable, lockOptions));
+    }
+
+    @Override
+    public Object load(String s, Serializable serializable, LockOptions lockOptions) throws HibernateException {
+        return protobufBuilderToMessage(getNativeSession().load(s, serializable, lockOptions));
+    }
+
+    @Override
+    public LockRequest buildLockRequest(LockOptions lockOptions) {
+        return getNativeSession().buildLockRequest(lockOptions);
+    }
+
+    @Override
+    public void refresh(Object o, LockOptions lockOptions) throws HibernateException {
+        //TODO
+        throw new HibernateException("NOT IMPLEMENTED!");
+    }
+
+    @Override
+    public Object get(Class aClass, Serializable serializable, LockOptions lockOptions) throws HibernateException {
+        return protobufBuilderToMessage(getNativeSession().get(protobufBuilderClassFromMessageClass(aClass), serializable, lockOptions));
+    }
+
+    @Override
+    public Object get(String s, Serializable serializable, LockOptions lockOptions) throws HibernateException {
+        return protobufBuilderToMessage(getNativeSession().get(s, serializable, lockOptions));
+    }
+
+    @Override
+    public boolean isReadOnly(Object o) {
+        //TODO
+        return false;
+    }
+
+    @Override
+    public boolean isFetchProfileEnabled(String s) throws UnknownProfileException {
+        return getNativeSession().isFetchProfileEnabled(s);
+    }
+
+    @Override
+    public void enableFetchProfile(String s) throws UnknownProfileException {
+        getNativeSession().enableFetchProfile(s);
+    }
+
+    @Override
+    public void disableFetchProfile(String s) throws UnknownProfileException {
+        getNativeSession().disableFetchProfile(s);
     }
 }

@@ -13,8 +13,8 @@ public class CatDao {
     private Session session;
 
     @Required
-    public void setSessionFactory(SessionFactory sessionFactory){
-        this.session = new ProtobufTransformerSession(sessionFactory);
+    public void setCurrentSession(Session currentSession){
+        this.session = currentSession;
     }
 
     @Transactional(readOnly = false)

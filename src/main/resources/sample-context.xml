@@ -6,7 +6,8 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
-	   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+	   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd"
+        default-lazy-init="true">
 
     <bean id="persistence-hibernate-property-configurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="location" value="classpath:jdbc.properties" />
@@ -43,19 +44,23 @@
 		</property>
     </bean>
 
+    <bean id="transformerSession" class="org.codeandmagic.protobuf2hibernate.ProtobufTransformerSession">
+        <constructor-arg ref="session-factory-protobuf" />
+    </bean>
+
     <bean id="txManager"
 		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
 		<property name="sessionFactory" ref="session-factory-protobuf" />
 	</bean>
 
-    <tx:annotation-driven transaction-manager="txManager" />
+    <tx:annotation-driven transaction-manager="txManager" proxy-target-class="false" />
 
     <!--<bean name="dog-dao" class="org.codeandmagic.protobuf2hibernate.sample.DogDao">
         <property name="sessionFactory" ref="session-factory" />
     </bean>-->
     
     <bean name="cat-dao" class="org.codeandmagic.protobuf2hibernate.sample.CatDao">
-        <property name="sessionFactory" ref="session-factory-protobuf" />
+        <property name="currentSession" ref="transformerSession" />
     </bean>
 
 </beans>

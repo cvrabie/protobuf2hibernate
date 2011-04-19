@@ -2,13 +2,16 @@ package org.codeandmagic.protobuf2hibernate;
 
 import com.google.protobuf.Descriptors;
 import com.google.protobuf.Message;
+import org.apache.commons.collections.iterators.ObjectGraphIterator;
 import org.hibernate.EntityMode;
 import org.hibernate.EntityNameResolver;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.engine.SessionImplementor;
+import org.hibernate.mapping.MetaAttribute;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
+import org.hibernate.property.Getter;
 import org.hibernate.tuple.entity.EntityMetamodel;
 import org.hibernate.tuple.entity.EntityTuplizer;
 import org.slf4j.Logger;
@@ -16,9 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class ProtobufTuplizer implements EntityTuplizer{
     public final static EntityMode PROTOBUF_ENTITY_MODE = new EntityMode("protobuf");
@@ -33,6 +34,12 @@ public class ProtobufTuplizer implements EntityTuplizer{
     private final Map<Integer,String> propertyIndexToPropertyName = new HashMap<Integer,String>();;
     private final Map<String,Descriptors.FieldDescriptor> fieldCacheByName = new HashMap<String, Descriptors.FieldDescriptor>();
     private final Map<Integer,Descriptors.FieldDescriptor> fieldCacheByIndex = new HashMap<Integer, Descriptors.FieldDescriptor>();
+    private final Map<String, Property> propertyCacheByName = new HashMap<String, Property>();
+    private final Map<String, FieldAccessType> accessTypeByName = new HashMap<String, FieldAccessType>();
+
+    public static enum FieldAccessType{
+        NO_TRANSFORM, TRANSFORM_MESSAGE_TO_BUILDER
+    }
 
     public ProtobufTuplizer(EntityMetamodel entityMetamodel, PersistentClass mappingInfo)
             throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
@@ -42,17 +49,18 @@ public class ProtobufTuplizer implements EntityTuplizer{
         assert Message.Builder.class.isAssignableFrom(this.builderClass);
 
         //the properties of the mapped class
-        Property idProperty = mappingInfo.getIdentifierProperty();
+        final Property idProperty = mappingInfo.getIdentifierProperty();
         idPropertyName = null != idProperty ? idProperty.getName() : null;
 
-        Property versionProperty = mappingInfo.getVersion();
+        final Property versionProperty = mappingInfo.getVersion();
         versionPropertyName = null != versionProperty ? versionProperty.getName() : null;
 
         int i = 0;
-        Iterator iter = mappingInfo.getPropertyClosureIterator();
+        final Iterator iter = mappingInfo.getPropertyClosureIterator();
         while (iter.hasNext()){
-            Property property = (Property) iter.next();
-            this.propertyIndexToPropertyName.put(i, property.getName());
+            final Property property = (Property) iter.next();
+            propertyCacheByName.put(property.getName(), property);
+            propertyIndexToPropertyName.put(i, property.getName());
             ++i;
         }
 
@@ -60,7 +68,15 @@ public class ProtobufTuplizer implements EntityTuplizer{
         Descriptors.Descriptor classDescriptor = MessageUtil.getDescriptorForBuilderClass(builderClass);
         for(Descriptors.FieldDescriptor field : classDescriptor.getFields()){
             fieldCacheByName.put(field.getName(),field);
+            final Property p = propertyCacheByName.get(field.getName());
+            if(null != p){
+                final MetaAttribute pt = p.getMetaAttribute("protobuf-transform");
+                accessTypeByName.put(field.getName(), null==pt || "true".equals(pt.getValue().trim().toLowerCase()) ?
+                                    FieldAccessType.TRANSFORM_MESSAGE_TO_BUILDER :
+                                    FieldAccessType.NO_TRANSFORM);
+            }
         }
+
         for(Map.Entry<Integer,String> entry : propertyIndexToPropertyName.entrySet()){
             fieldCacheByIndex.put(entry.getKey(), fieldCacheByName.get(entry.getValue()));
         }
@@ -97,10 +113,23 @@ public class ProtobufTuplizer implements EntityTuplizer{
     }
 
     private Object getPropertyValue(final Object entity, final Descriptors.FieldDescriptor field){
+        final boolean shouldTransform = FieldAccessType.TRANSFORM_MESSAGE_TO_BUILDER == accessTypeByName.get(field.getName())
+                                        && Descriptors.FieldDescriptor.Type.MESSAGE == field.getType();
         if(entity instanceof Message.Builder){
             final Message.Builder msg = (Message.Builder) entity;
-            if(field.isRepeated()) return msg.getField(field);
-            else return msg.hasField(field) ? msg.getField(field) : null;
+            if(!field.isRepeated()){//NORMAL FIELD
+                if(!msg.hasField(field)) return null;
+                final Object value = msg.getField(field);
+                return shouldTransform ? ProtobufTransformer.protobufMessageToBuilder(value) : value;
+            }else{//REPEATED
+                final int count = msg.getRepeatedFieldCount(field);
+                final Object[] result = new Object[count];
+                for(int i=0; i<count; ++i){
+                    final Object val = msg.getRepeatedField(field, i);
+                    result[i] = shouldTransform ? ProtobufTransformer.protobufMessageToBuilder(val) : val;
+                }
+                return Arrays.asList(result);
+            }
         }else{
             throw new HibernateException("Can only handle protobuf Message.Builder");
         }
@@ -122,8 +151,7 @@ public class ProtobufTuplizer implements EntityTuplizer{
         Message.Builder msg = (Message.Builder) entity;
         final int span = entityMetamodel.getPropertySpan();
         for ( int i = 0; i < span; i++ ) {
-            final Object value = values[i];
-            if(null != value) msg.setField(fieldCacheByIndex.get(i),value);
+            setPropertyValue(entity, i, values[i]);
         }
     }
 
@@ -148,8 +176,14 @@ public class ProtobufTuplizer implements EntityTuplizer{
     private void setPropertyValue(final Object entity, final Descriptors.FieldDescriptor field,
                                   final Object value) throws HibernateException {
         if(!(entity instanceof Message.Builder)) throw new HibernateException("Can only handle protobuf Message.Builder");
-        if(null != value) ((Message.Builder)entity).setField(field, value);
+        final Object valueToSet =   Descriptors.FieldDescriptor.Type.MESSAGE == field.getType() ?
+                                        field.isRepeated() ?
+                                        ProtobufTransformer.protobufBuilderToMessage((Collection<?>)value) :
+                                        ProtobufTransformer.protobufBuilderToMessage(value) :
+                                    value;
+        if(null != value) ((Message.Builder)entity).setField(field, valueToSet);
     }
+
 
     @Override
     public EntityMode getEntityMode(){
@@ -253,5 +287,46 @@ public class ProtobufTuplizer implements EntityTuplizer{
 			}
 			return entityName;
 		}
+    }
+
+    /** New in hibernate 3.5 **/
+
+    @Override
+    public Object instantiate(Serializable id, SessionImplementor session) {
+        return instantiate(id);
+    }
+
+    @Override
+    public Serializable getIdentifier(Object o, SessionImplementor session) {
+        return getIdentifier(o);
+    }
+
+    @Override
+    public void setIdentifier(Object o, Serializable id, SessionImplementor session) {
+        setIdentifier(o, id);
+    }
+
+    @Override
+    public void resetIdentifier(Object o, Serializable id, Object o1, SessionImplementor session) {
+        resetIdentifier(o, id, o1);
+    }
+
+    @Override
+    public Getter getIdentifierGetter() {
+        //TODO
+        return null;
+    }
+
+    @Override
+    public Getter getVersionGetter() {
+        //TODO
+        return null;
+    }
+
+
+    @Override
+    public Getter getGetter(int i) {
+        //TODO
+        return null;
     }
 }

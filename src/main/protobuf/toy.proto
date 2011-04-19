@@ -1,0 +1,11 @@
+package domain;
+
+option optimize_for = SPEED;
+option java_package = "org.codeandmagic.protobuf2hibernate.sample";
+option java_outer_classname = "Descriptor_Toy";
+option java_multiple_files = true;
+
+message Toy {
+	required string ownerUuid = 2;
+	required string name = 3;
+ }

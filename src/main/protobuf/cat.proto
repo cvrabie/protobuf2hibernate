@@ -6,6 +6,7 @@ option java_outer_classname = "Descriptor_Cat";
 option java_multiple_files = true;
 
 import "person.proto";
+import "toy.proto";
 
 message Cat {
  	required string uuid = 1;
@@ -16,4 +17,6 @@ message Cat {
 	repeated string kittens = 5;
 
 	optional Person owner = 6;
+	repeated Cat friends = 7;
+	repeated Toy toys = 8;
  }

@@ -3,7 +3,7 @@
         "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
         "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
-<hibernate-mapping>
+ <hibernate-mapping>
     <typedef class="org.codeandmagic.protobuf2hibernate.MessageToByteArray" name="InnerMessage">
         <param name="messageType">org.codeandmagic.protobuf2hibernate.sample.Person</param>
     </typedef>
@@ -14,10 +14,22 @@
         <property name="name" />
         <property name="hairLength" />
         <property name="created" />
+
+        <!-- Collection of basic type -->
         <bag name="kittens" table="cats_kittens">
             <key column="cat_uuid" foreign-key="uuid" />
             <element type="string" column="val" />
         </bag>
-        <property name="owner" type="InnerMessage" />
+
+        <!-- Message field serialized as blob -->
+        <property name="owner" type="InnerMessage">
+            <meta attribute="protobuf-transform">false</meta>
+        </property>    
+
+        <!-- Collection of Entities -->
+        <bag name="friends" table="cat_friends" cascade="save-update" lazy="false" inverse="false">
+            <key column="cat_uuid" not-null="true" />
+            <many-to-many class="org.codeandmagic.protobuf2hibernate.sample.Cat$Builder" column="friend_uuid" lazy="false" />
+        </bag>
     </class>
 </hibernate-mapping>
