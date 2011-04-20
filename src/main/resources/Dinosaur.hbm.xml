@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+ <hibernate-mapping>
+    <typedef class="org.codeandmagic.protobuf2hibernate.MessageToByteArray" name="InnerMessage">
+        <param name="messageType">org.codeandmagic.protobuf2hibernate.sample.Dinosaur</param>
+    </typedef>
+
+    <class name="org.codeandmagic.protobuf2hibernate.sample.Dinosaur$Builder" table="dinos">
+        <tuplizer class="org.codeandmagic.protobuf2hibernate.ProtobufEntityTuplizer" entity-mode="pojo" />
+        <id name="uuid" type="string" />
+        <property name="name" />
+        <property name="bulk" type="InnerMessage">
+            <meta attribute="protobuf_self_bulk">true</meta>
+        </property>
+    </class>
+</hibernate-mapping>

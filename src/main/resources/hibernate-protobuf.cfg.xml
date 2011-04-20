@@ -3,5 +3,6 @@
 <hibernate-configuration>
     <session-factory>
         <mapping resource="Cat.hbm.xml"/>
+        <mapping resource="Dinosaur.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

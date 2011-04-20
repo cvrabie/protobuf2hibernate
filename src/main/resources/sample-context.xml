@@ -63,4 +63,8 @@
         <property name="currentSession" ref="transformerSession" />
     </bean>
 
+    <bean name="dinosaur-dao" class="org.codeandmagic.protobuf2hibernate.sample.DinosaurDao">
+        <property name="currentSession" ref="transformerSession" />
+    </bean>
+
 </beans>

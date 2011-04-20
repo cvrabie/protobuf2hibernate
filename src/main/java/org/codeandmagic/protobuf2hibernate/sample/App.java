@@ -16,6 +16,7 @@ public class App {
         BeanFactory factory = new ClassPathXmlApplicationContext("sample-context.xml");
         //DogDao dd = (DogDao) factory.getBean("dog-dao");
         CatDao cd = (CatDao) factory.getBean("cat-dao");
+        DinosaurDao dd = (DinosaurDao) factory.getBean("dinosaur-dao");
 
         /*Dog d = new Dog();
         d.setUuid("u1");
@@ -23,11 +24,11 @@ public class App {
         d.setCreated(new Date());
         d.setPuppies(Arrays.asList(new String[]{"K1","K2"}));
         dd.save(d);
-        */
-        /*
+
         Dog d = dd.getByName("Fluffy").get(0);
         System.out.print("======>"+d.getUuid());
         */
+
 
         Cat c1 = Cat.newBuilder()
                 .setUuid(UUID.randomUUID().toString())
@@ -58,10 +59,19 @@ public class App {
                 .build();
         cd.save(c);
 
-        List<Cat> cb = cd.getByName("Eve");
-        System.out.print(cb);
+        List<Cat> cats = cd.getByName("Eve");
+        System.out.print(cats);
 
-        System.out.print(cb.get(0));
+        Dinosaur d = Dinosaur.newBuilder()
+                     .setName("Fluffy")
+                     .setAge(9999)
+                     .setTailLength(47.6f)
+                     .setUuid(UUID.randomUUID().toString())
+                     .addAllVictims(Arrays.asList(new String[]{"PunyHuman","Meteorite"}))
+                     .build();
+        dd.save(d);
+        List<Dinosaur> dinos = dd.getByName("Fluffy");
+        System.out.print(dinos);
 
     }
 }

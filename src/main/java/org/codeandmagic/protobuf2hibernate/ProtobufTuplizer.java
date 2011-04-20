@@ -17,14 +17,17 @@ public abstract class ProtobufTuplizer implements Tuplizer {
     private final static Logger log = LoggerFactory.getLogger(ProtobufTuplizer.class);
 
     protected final Class<? extends Message.Builder> builderClass;
+    protected final Descriptors.Descriptor classDescriptor;
     protected final String entityName;
 
     protected final int propertySpan;
     protected final Map<Integer,String> propertyIndexToPropertyName = new HashMap<Integer,String>();;
-    protected final Map<String,Descriptors.FieldDescriptor> fieldCacheByName = new HashMap<String, Descriptors.FieldDescriptor>();
-    protected final Map<Integer,Descriptors.FieldDescriptor> fieldCacheByIndex = new HashMap<Integer, Descriptors.FieldDescriptor>();
+    protected final Map<String, Object> fieldCacheByName = new HashMap<String, Object>();
+    protected final Map<Integer, Object> fieldCacheByIndex = new HashMap<Integer, Object>();
     protected final Map<String, Property> propertyCacheByName = new HashMap<String, Property>();
     protected final Map<String, FieldAccessType> accessTypeByName = new HashMap<String, FieldAccessType>();
+
+    protected final String bulkPropertyName;
 
     public static enum FieldAccessType{
         NO_TRANSFORM, TRANSFORM_MESSAGE_TO_BUILDER
@@ -34,23 +37,33 @@ public abstract class ProtobufTuplizer implements Tuplizer {
                             final Class<? extends Message.Builder> builderClass,
                             final int propertySpan,
                             final Iterator<Property> propertiesIterator)
-            throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+            throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, IllegalAccessException
+    {
         assert Message.Builder.class.isAssignableFrom(builderClass);
         this.builderClass = builderClass;
+        this.classDescriptor = MessageUtil.getDescriptorForBuilderClass(builderClass);
         this.entityName = entityName;
         this.propertySpan = propertySpan;
 
         //INITIALIZE PROPERTIES
         int i = 0;
+        String bulkProp = null;
         while (propertiesIterator.hasNext()){
             final Property property = (Property) propertiesIterator.next();
+
+            final MetaAttribute selfBulk = property.getMetaAttribute("protobuf_self_bulk");
+            if(null != selfBulk && "true".equals(selfBulk.getValue().trim().toLowerCase()))
+                bulkProp = property.getName();
+
             propertyCacheByName.put(property.getName(), property);
             propertyIndexToPropertyName.put(i, property.getName());
+
             ++i;
         }
+        bulkPropertyName = bulkProp;
+
 
         //create field descriptor cache
-        Descriptors.Descriptor classDescriptor = MessageUtil.getDescriptorForBuilderClass(builderClass);
         for(Descriptors.FieldDescriptor field : classDescriptor.getFields()){
             fieldCacheByName.put(field.getName(),field);
             final Property p = propertyCacheByName.get(field.getName());
@@ -61,10 +74,12 @@ public abstract class ProtobufTuplizer implements Tuplizer {
                                     FieldAccessType.NO_TRANSFORM);
             }
         }
+        if(null != bulkPropertyName) fieldCacheByName.put(bulkPropertyName, classDescriptor);
 
         for(Map.Entry<Integer,String> entry : propertyIndexToPropertyName.entrySet()){
             fieldCacheByIndex.put(entry.getKey(), fieldCacheByName.get(entry.getValue()));
         }
+
         log.debug("Built cache for {} properties in entity {}",fieldCacheByName.size(), entityName);
     }
 
@@ -98,21 +113,31 @@ public abstract class ProtobufTuplizer implements Tuplizer {
         return getPropertyValue(entity, fieldCacheByIndex.get(i));
     }
 
-    protected Object getPropertyValue(final Object entity, final Descriptors.FieldDescriptor field){
-        final boolean shouldTransform = FieldAccessType.TRANSFORM_MESSAGE_TO_BUILDER == accessTypeByName.get(field.getName())
+    protected Object getPropertyValue(final Object entity, final Object propertyDescriptor){
+        if(null == propertyDescriptor ) throw new HibernateException("Property descriptor can' be null!");
+        if(!(entity instanceof Message.Builder)) throw new HibernateException("Can only handle protobuf Message.Builder");
+        Message.Builder msg = (Message.Builder)entity;
+
+        if(propertyDescriptor instanceof Descriptors.FieldDescriptor)//PROPERTY ACCESSES A PROTOBUF FIELD
+        {
+            final Descriptors.FieldDescriptor field = (Descriptors.FieldDescriptor) propertyDescriptor;
+            final boolean shouldTransform = FieldAccessType.TRANSFORM_MESSAGE_TO_BUILDER == accessTypeByName.get(field.getName())
                                         && Descriptors.FieldDescriptor.Type.MESSAGE == field.getType();
-        if(entity instanceof Message.Builder){
-            final Message.Builder msg = (Message.Builder) entity;
-            if(!field.isRepeated()){//NORMAL FIELD
+            if(!field.isRepeated()) //NORMAL (NON-REPEATED) FIELD
+            {
                 if(!msg.hasField(field)) return null;
                 final Object value = msg.getField(field);
                 return shouldTransform ? transformMessageToBuilder((Message)value) : value;
-            }else{//REPEATED
+            }
+            else //REPEATED
+            {
                 final Collection<?> value = (Collection<?>)msg.getField(field);
                 return shouldTransform ? transformCollectionToBuilders(value) : value;
             }
+        }else if(classDescriptor == propertyDescriptor){ //PROPERTY IS A BULK ACCESS TO THE WHOLE MESSAGE
+            return msg.clone().build();
         }else{
-            throw new HibernateException("Can only handle protobuf Message.Builder");
+            throw new HibernateException("Could not understand property descriptor "+propertyDescriptor);
         }
     }
 
@@ -156,15 +181,30 @@ public abstract class ProtobufTuplizer implements Tuplizer {
         setPropertyValue(entity, fieldCacheByName.get(propertyName), value);
     }
 
-    protected void setPropertyValue(final Object entity, final Descriptors.FieldDescriptor field,
+    protected void setPropertyValue(final Object entity, final Object propertyDescriptor,
                                   final Object value) throws HibernateException {
+        if(null == propertyDescriptor ) throw new HibernateException("Property descriptor can' be null!");
         if(!(entity instanceof Message.Builder)) throw new HibernateException("Can only handle protobuf Message.Builder");
-        final Object valueToSet =   Descriptors.FieldDescriptor.Type.MESSAGE == field.getType() ?
+        Message.Builder msg = (Message.Builder)entity;
+
+        if(propertyDescriptor instanceof Descriptors.FieldDescriptor)//PROPERTY ACCESSES A PROTOBUF FIELD
+        {
+            final Descriptors.FieldDescriptor field = (Descriptors.FieldDescriptor) propertyDescriptor;
+
+            final Object valueToSet =   Descriptors.FieldDescriptor.Type.MESSAGE == field.getType() ?
                                         (field.isRepeated() ?
                                         ProtobufTransformer.protobufBuilderToMessage((Collection<?>)value) :
                                         ProtobufTransformer.protobufBuilderToMessage(value) ) :
                                     value;
-        if(null != value) ((Message.Builder)entity).setField(field, valueToSet);
+            if(null != value) msg.setField(field, valueToSet);
+        }
+        else if(classDescriptor == propertyDescriptor){ //PROPERTY IS A BULK ACCESS TO THE WHOLE MESSAGE
+            if(!(value instanceof Message)){
+                throw new HibernateException("You can only set a message value in a bulk property!");
+            }
+            final Message val = (Message) value;
+            msg.mergeFrom(val);
+        }
     }
 
     @Override

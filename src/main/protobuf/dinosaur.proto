@@ -1,0 +1,15 @@
+package domain;
+
+option optimize_for = SPEED;
+option java_package = "org.codeandmagic.protobuf2hibernate.sample";
+option java_outer_classname = "Descriptor_Dinosaur";
+option java_multiple_files = true;
+
+message Dinosaur {
+ 	required string uuid = 1;
+	required int64 age = 2;
+	required string name = 3;
+
+	optional float tailLength = 4;
+	repeated string victims = 5;
+ }
