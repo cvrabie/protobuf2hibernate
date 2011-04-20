@@ -9,7 +9,7 @@
     </typedef>
 
     <class name="org.codeandmagic.protobuf2hibernate.sample.Cat$Builder" table="cats">
-        <tuplizer class="org.codeandmagic.protobuf2hibernate.ProtobufTuplizer" entity-mode="pojo" />
+        <tuplizer class="org.codeandmagic.protobuf2hibernate.ProtobufEntityTuplizer" entity-mode="pojo" />
         <id name="uuid" type="string" />
         <property name="name" />
         <property name="hairLength" />
@@ -30,6 +30,15 @@
         <bag name="friends" table="cat_friends" cascade="save-update" lazy="false" inverse="false">
             <key column="cat_uuid" not-null="true" />
             <many-to-many class="org.codeandmagic.protobuf2hibernate.sample.Cat$Builder" column="friend_uuid" lazy="false" />
+        </bag>
+
+        <bag name="toys" table="cat_toys" cascade="all-delete-orphan" lazy="false" inverse="false">
+            <key column="cat_uuid" foreign-key="cat_uuid" not-null="true" />
+            <composite-element class="org.codeandmagic.protobuf2hibernate.sample.Toy$Builder">
+                <tuplizer class="org.codeandmagic.protobuf2hibernate.ProtobufComponentTuplizer"/>
+                <property name="name" not-null="true" />
+                <property name="description" not-null="false" />
+            </composite-element>
         </bag>
     </class>
 </hibernate-mapping>

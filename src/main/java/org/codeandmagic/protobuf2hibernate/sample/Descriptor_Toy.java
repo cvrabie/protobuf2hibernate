@@ -21,10 +21,10 @@ public final class Descriptor_Toy {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\ttoy.proto\022\006domain\"&\n\003Toy\022\021\n\townerUuid\030" +
-      "\002 \002(\t\022\014\n\004name\030\003 \002(\tB@\n*org.codeandmagic." +
-      "protobuf2hibernate.sampleB\016Descriptor_To" +
-      "yH\001P\001"
+      "\n\ttoy.proto\022\006domain\"(\n\003Toy\022\014\n\004name\030\003 \002(\t" +
+      "\022\023\n\013description\030\004 \001(\tB@\n*org.codeandmagi" +
+      "c.protobuf2hibernate.sampleB\016Descriptor_" +
+      "ToyH\001P\001"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -36,7 +36,7 @@ public final class Descriptor_Toy {
           internal_static_domain_Toy_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_domain_Toy_descriptor,
-              new java.lang.String[] { "OwnerUuid", "Name", },
+              new java.lang.String[] { "Name", "Description", },
               org.codeandmagic.protobuf2hibernate.sample.Toy.class,
               org.codeandmagic.protobuf2hibernate.sample.Toy.Builder.class);
           return null;

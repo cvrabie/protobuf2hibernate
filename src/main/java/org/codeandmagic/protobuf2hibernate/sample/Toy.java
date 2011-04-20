@@ -26,13 +26,6 @@ public  final class Toy extends
     return org.codeandmagic.protobuf2hibernate.sample.Descriptor_Toy.internal_static_domain_Toy_fieldAccessorTable;
   }
   
-  // required string ownerUuid = 2;
-  public static final int OWNERUUID_FIELD_NUMBER = 2;
-  private boolean hasOwnerUuid;
-  private java.lang.String ownerUuid_ = "";
-  public boolean hasOwnerUuid() { return hasOwnerUuid; }
-  public java.lang.String getOwnerUuid() { return ownerUuid_; }
-  
   // required string name = 3;
   public static final int NAME_FIELD_NUMBER = 3;
   private boolean hasName;
@@ -40,22 +33,29 @@ public  final class Toy extends
   public boolean hasName() { return hasName; }
   public java.lang.String getName() { return name_; }
   
+  // optional string description = 4;
+  public static final int DESCRIPTION_FIELD_NUMBER = 4;
+  private boolean hasDescription;
+  private java.lang.String description_ = "";
+  public boolean hasDescription() { return hasDescription; }
+  public java.lang.String getDescription() { return description_; }
+  
   public boolean equals(Object otherObject) {
     if (otherObject == this) return true;
     if (!(otherObject instanceof Toy)) return false;
     if (hashCode() != otherObject.hashCode()) return false;
     Toy other = (Toy) otherObject;
-    if (hasOwnerUuid) {
-      if (!other.hasOwnerUuid) return false;
-      if (!ownerUuid_.equals(other.ownerUuid_)) return false;
-    } else {
-      if (other.hasOwnerUuid) return false;
-    }
     if (hasName) {
       if (!other.hasName) return false;
       if (!name_.equals(other.name_)) return false;
     } else {
       if (other.hasName) return false;
+    }
+    if (hasDescription) {
+      if (!other.hasDescription) return false;
+      if (!description_.equals(other.description_)) return false;
+    } else {
+      if (other.hasDescription) return false;
     }
     return getUnknownFields().equals(other.getUnknownFields());
   }
@@ -71,18 +71,17 @@ public  final class Toy extends
   public int super_hashCode() { return super.hashCode(); }
   
   public final boolean isInitialized() {
-    if (!hasOwnerUuid) return false;
     if (!hasName) return false;
     return true;
   }
   
   public void writeTo(com.google.protobuf.CodedOutputStream output)
                       throws java.io.IOException {
-    if (hasOwnerUuid()) {
-      output.writeString(2, getOwnerUuid());
-    }
     if (hasName()) {
       output.writeString(3, getName());
+    }
+    if (hasDescription()) {
+      output.writeString(4, getDescription());
     }
     getUnknownFields().writeTo(output);
   }
@@ -93,13 +92,13 @@ public  final class Toy extends
     if (size != -1) return size;
   
     size = 0;
-    if (hasOwnerUuid()) {
-      size += com.google.protobuf.CodedOutputStream
-        .computeStringSize(2, getOwnerUuid());
-    }
     if (hasName()) {
       size += com.google.protobuf.CodedOutputStream
         .computeStringSize(3, getName());
+    }
+    if (hasDescription()) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeStringSize(4, getDescription());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSerializedSize = size;
@@ -250,11 +249,11 @@ public  final class Toy extends
     
     public Builder mergeFrom(org.codeandmagic.protobuf2hibernate.sample.Toy other) {
       if (other == org.codeandmagic.protobuf2hibernate.sample.Toy.getDefaultInstance()) return this;
-      if (other.hasOwnerUuid()) {
-        setOwnerUuid(other.getOwnerUuid());
-      }
       if (other.hasName()) {
         setName(other.getName());
+      }
+      if (other.hasDescription()) {
+        setDescription(other.getDescription());
       }
       this.mergeUnknownFields(other.getUnknownFields());
       return this;
@@ -281,39 +280,18 @@ public  final class Toy extends
             }
             break;
           }
-          case 18: {
-            setOwnerUuid(input.readString());
-            break;
-          }
           case 26: {
             setName(input.readString());
+            break;
+          }
+          case 34: {
+            setDescription(input.readString());
             break;
           }
         }
       }
     }
     
-    
-    // required string ownerUuid = 2;
-    public boolean hasOwnerUuid() {
-      return result.hasOwnerUuid();
-    }
-    public java.lang.String getOwnerUuid() {
-      return result.getOwnerUuid();
-    }
-    public Builder setOwnerUuid(java.lang.String value) {
-      if (value == null) {
-    throw new NullPointerException();
-  }
-  result.hasOwnerUuid = true;
-      result.ownerUuid_ = value;
-      return this;
-    }
-    public Builder clearOwnerUuid() {
-      result.hasOwnerUuid = false;
-      result.ownerUuid_ = getDefaultInstance().getOwnerUuid();
-      return this;
-    }
     
     // required string name = 3;
     public boolean hasName() {
@@ -333,6 +311,27 @@ public  final class Toy extends
     public Builder clearName() {
       result.hasName = false;
       result.name_ = getDefaultInstance().getName();
+      return this;
+    }
+    
+    // optional string description = 4;
+    public boolean hasDescription() {
+      return result.hasDescription();
+    }
+    public java.lang.String getDescription() {
+      return result.getDescription();
+    }
+    public Builder setDescription(java.lang.String value) {
+      if (value == null) {
+    throw new NullPointerException();
+  }
+  result.hasDescription = true;
+      result.description_ = value;
+      return this;
+    }
+    public Builder clearDescription() {
+      result.hasDescription = false;
+      result.description_ = getDefaultInstance().getDescription();
       return this;
     }
   }

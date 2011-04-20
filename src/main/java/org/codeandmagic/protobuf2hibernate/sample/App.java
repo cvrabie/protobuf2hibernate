@@ -51,6 +51,8 @@ public class App {
                 .setHairLength(2.31f)
                 .addAllKittens(Arrays.asList(new String[]{"Caty","Nutty"}))
                 .setOwner(Person.newBuilder().setName("CatOwner").build())
+                .addToys(Toy.newBuilder().setName("Curtains").build())
+                .addToys(Toy.newBuilder().setName("OwnersNose").setDescription("The bigger the better").build())
                 .addFriends(c1)
                 .addFriends(c2)
                 .build();
