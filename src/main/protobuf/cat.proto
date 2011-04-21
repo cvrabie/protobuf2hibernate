@@ -19,4 +19,11 @@ message Cat {
 	optional Person owner = 6;
 	repeated Cat friends = 7;
 	repeated Toy toys = 8;
+
+	optional HairType hairType =9;
+ }
+
+ enum HairType{
+    STRAIGHT =0;
+    CURLY = 1;
  }

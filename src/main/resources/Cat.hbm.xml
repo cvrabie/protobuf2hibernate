@@ -9,6 +9,7 @@
         <id name="uuid" type="string" />
         <property name="name" />
         <property name="hairLength" />
+        <property name="hairType" type="string" />
         <property name="created" />
 
         <!-- Collection of basic type -->

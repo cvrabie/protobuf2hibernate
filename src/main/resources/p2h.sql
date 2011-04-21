@@ -1,3 +1,12 @@
+-- phpMyAdmin SQL Dump
+-- version 3.2.4
+-- http://www.phpmyadmin.net
+--
+-- Host: localhost
+-- Generation Time: Apr 21, 2011 at 05:07 PM
+-- Server version: 5.1.44
+-- PHP Version: 5.3.1
+
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
 
@@ -21,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `cats` (
   `name` varchar(255) NOT NULL,
   `created` int(11) NOT NULL,
   `hairLength` float NOT NULL,
+  `hairType` varchar(255) DEFAULT NULL,
   `owner` blob,
   PRIMARY KEY (`uuid`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;

@@ -56,6 +56,7 @@ public class App {
                 .addToys(Toy.newBuilder().setName("OwnersNose").setDescription("The bigger the better").build())
                 .addFriends(c1)
                 .addFriends(c2)
+                .setHairType(HairType.CURLY)
                 .build();
         cd.save(c);
 

@@ -22,13 +22,15 @@ public final class Descriptor_Cat {
   static {
     java.lang.String[] descriptorData = {
       "\n\tcat.proto\022\006domain\032\014person.proto\032\ttoy.p" +
-      "roto\"\257\001\n\003Cat\022\014\n\004uuid\030\001 \002(\t\022\017\n\007created\030\002 " +
+      "roto\"\323\001\n\003Cat\022\014\n\004uuid\030\001 \002(\t\022\017\n\007created\030\002 " +
       "\002(\003\022\014\n\004name\030\003 \002(\t\022\022\n\nhairLength\030\004 \001(\002\022\017\n" +
       "\007kittens\030\005 \003(\t\022\035\n\005owner\030\006 \001(\0132\016.domain.P" +
       "erson\022\034\n\007friends\030\007 \003(\0132\013.domain.Cat\022\031\n\004t" +
-      "oys\030\010 \003(\0132\013.domain.ToyB@\n*org.codeandmag" +
-      "ic.protobuf2hibernate.sampleB\016Descriptor" +
-      "_CatH\001P\001"
+      "oys\030\010 \003(\0132\013.domain.Toy\022\"\n\010hairType\030\t \001(\016" +
+      "2\020.domain.HairType*#\n\010HairType\022\014\n\010STRAIG" +
+      "HT\020\000\022\t\n\005CURLY\020\001B@\n*org.codeandmagic.prot" +
+      "obuf2hibernate.sampleB\016Descriptor_CatH\001P" +
+      "\001"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
       new com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner() {
@@ -40,7 +42,7 @@ public final class Descriptor_Cat {
           internal_static_domain_Cat_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_domain_Cat_descriptor,
-              new java.lang.String[] { "Uuid", "Created", "Name", "HairLength", "Kittens", "Owner", "Friends", "Toys", },
+              new java.lang.String[] { "Uuid", "Created", "Name", "HairLength", "Kittens", "Owner", "Friends", "Toys", "HairType", },
               org.codeandmagic.protobuf2hibernate.sample.Cat.class,
               org.codeandmagic.protobuf2hibernate.sample.Cat.Builder.class);
           return null;

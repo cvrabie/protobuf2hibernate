@@ -123,27 +123,47 @@ public abstract class ProtobufTuplizer implements Tuplizer {
         if(!(entity instanceof Message.Builder)) throw new HibernateException("Can only handle protobuf Message.Builder");
         Message.Builder msg = (Message.Builder)entity;
 
-        if(propertyDescriptor instanceof Descriptors.FieldDescriptor)//PROPERTY ACCESSES A PROTOBUF FIELD
+        if(propertyDescriptor instanceof Descriptors.FieldDescriptor)
         {
+            //PROPERTY ACCESSES A PROTOBUF FIELD
             final Descriptors.FieldDescriptor field = (Descriptors.FieldDescriptor) propertyDescriptor;
-            final boolean shouldTransform = FieldAccessType.TRANSFORM_MESSAGE_TO_BUILDER == accessTypeByName.get(field.getName())
-                                        && Descriptors.FieldDescriptor.Type.MESSAGE == field.getType();
-            if(!field.isRepeated()) //NORMAL (NON-REPEATED) FIELD
-            {
-                if(!msg.hasField(field)) return null;
-                final Object value = msg.getField(field);
-                return shouldTransform ? transformMessageToBuilder((Message)value) : value;
-            }
-            else //REPEATED
-            {
-                final Collection<?> value = (Collection<?>)msg.getField(field);
-                return shouldTransform ? transformCollectionToBuilders(value) : value;
-            }
-        }else if(classDescriptor == propertyDescriptor){ //PROPERTY IS A BULK ACCESS TO THE WHOLE MESSAGE
+            if(field.isRepeated()) return transformProtobufCollection(field,(Collection<?>)msg.getField(field));
+            else return msg.hasField(field) ? transformProtobufValue(field,msg.getField(field)) : null;
+        }else if(classDescriptor == propertyDescriptor){
+            //PROPERTY IS A BULK ACCESS TO THE WHOLE MESSAGE
             return msg.clone().build();
         }else{
             throw new HibernateException("Could not understand property descriptor "+propertyDescriptor);
         }
+    }
+
+    protected boolean shouldTransformMessageToBuilder(Descriptors.FieldDescriptor field){
+        return FieldAccessType.TRANSFORM_MESSAGE_TO_BUILDER == accessTypeByName.get(field.getName())
+               && Descriptors.FieldDescriptor.Type.MESSAGE == field.getType();
+    }
+
+    protected boolean shouldTransformEnumToString(Descriptors.FieldDescriptor field){
+        return Descriptors.FieldDescriptor.Type.ENUM == field.getType();
+    }
+
+    protected Object transformProtobufValue(Descriptors.FieldDescriptor field, Object value){
+         if(shouldTransformMessageToBuilder(field)) return transformMessageToBuilder((Message) value);
+         if(shouldTransformEnumToString(field)) return transformFromEnum((Descriptors.EnumValueDescriptor) value);
+         return value;
+    }
+
+    protected Object transformProtobufCollection(Descriptors.FieldDescriptor field, Collection<?> value){
+        final int count = value.size();
+        final Object[] result = new Object[count];
+        int i = 0;
+        for(Object val : (Collection<?>)value){
+            result[i++] = transformProtobufValue(field, val);
+        }
+        return Arrays.asList(result);
+    }
+
+    protected Object transformFromEnum(Descriptors.EnumValueDescriptor value){
+        return value.getName();
     }
 
     protected Object transformCollectionToBuilders(Collection<?> value){
@@ -195,12 +215,7 @@ public abstract class ProtobufTuplizer implements Tuplizer {
         if(propertyDescriptor instanceof Descriptors.FieldDescriptor)//PROPERTY ACCESSES A PROTOBUF FIELD
         {
             final Descriptors.FieldDescriptor field = (Descriptors.FieldDescriptor) propertyDescriptor;
-
-            final Object valueToSet =   Descriptors.FieldDescriptor.Type.MESSAGE == field.getType() ?
-                                        (field.isRepeated() ?
-                                        ProtobufTransformer.protobufBuilderToMessage((Collection<?>)value) :
-                                        ProtobufTransformer.protobufBuilderToMessage(value) ) :
-                                    value;
+            final Object valueToSet = prepareValue(field, value);
             if(null != value) msg.setField(field, valueToSet);
         }
         else if(classDescriptor == propertyDescriptor){ //PROPERTY IS A BULK ACCESS TO THE WHOLE MESSAGE
@@ -210,6 +225,32 @@ public abstract class ProtobufTuplizer implements Tuplizer {
             final Message val = (Message) value;
             msg.mergeFrom(val);
         }
+    }
+
+    protected Object prepareValue(Descriptors.FieldDescriptor field, Object value){
+        if(null==value) return null;
+        if(field.isRepeated()) return prepareCollection(field,(Collection<?>)value);
+        else return prepareNonCollection(field, value);
+    }
+
+    private Object prepareNonCollection(Descriptors.FieldDescriptor field, Object value) {
+        if(Descriptors.FieldDescriptor.Type.MESSAGE == field.getType()) return ProtobufTransformer.protobufBuilderToMessage(value);
+        if(Descriptors.FieldDescriptor.Type.ENUM == field.getType()) return transformToEnum(field, (String) value);
+        return value;
+    }
+
+    private Descriptors.EnumValueDescriptor transformToEnum(Descriptors.FieldDescriptor field, String value) {
+        return field.getEnumType().findValueByName(value);
+    }
+
+    protected Object prepareCollection(Descriptors.FieldDescriptor field, Collection<?> value){
+        final int count = value.size();
+        final Object[] result = new Object[count];
+        int i = 0;
+        for(Object val : (Collection<?>)value){
+            result[i++] = prepareNonCollection(field, val);
+        }
+        return Arrays.asList(result);
     }
 
     @Override

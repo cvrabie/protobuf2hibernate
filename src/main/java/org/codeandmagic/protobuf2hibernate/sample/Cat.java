@@ -97,6 +97,13 @@ public  final class Cat extends
     return toys_.get(index);
   }
   
+  // optional .domain.HairType hairType = 9;
+  public static final int HAIRTYPE_FIELD_NUMBER = 9;
+  private boolean hasHairType;
+  private org.codeandmagic.protobuf2hibernate.sample.HairType hairType_ = org.codeandmagic.protobuf2hibernate.sample.HairType.STRAIGHT;
+  public boolean hasHairType() { return hasHairType; }
+  public org.codeandmagic.protobuf2hibernate.sample.HairType getHairType() { return hairType_; }
+  
   public boolean equals(Object otherObject) {
     if (otherObject == this) return true;
     if (!(otherObject instanceof Cat)) return false;
@@ -135,6 +142,12 @@ public  final class Cat extends
     }
     if (!friends_.equals(other.friends_)) return false;
     if (!toys_.equals(other.toys_)) return false;
+    if (hasHairType) {
+      if (!other.hasHairType) return false;
+      if (hairType_ != other.hairType_) return false;
+    } else {
+      if (other.hasHairType) return false;
+    }
     return getUnknownFields().equals(other.getUnknownFields());
   }
   public boolean super_equals(final Object otherObject) { return super.equals(otherObject); }
@@ -190,6 +203,9 @@ public  final class Cat extends
     for (org.codeandmagic.protobuf2hibernate.sample.Toy element : getToysList()) {
       output.writeMessage(8, element);
     }
+    if (hasHairType()) {
+      output.writeEnum(9, getHairType().getNumber());
+    }
     getUnknownFields().writeTo(output);
   }
   
@@ -235,6 +251,10 @@ public  final class Cat extends
     for (org.codeandmagic.protobuf2hibernate.sample.Toy element : getToysList()) {
       size += com.google.protobuf.CodedOutputStream
         .computeMessageSize(8, element);
+    }
+    if (hasHairType()) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeEnumSize(9, getHairType().getNumber());
     }
     size += getUnknownFields().getSerializedSize();
     memoizedSerializedSize = size;
@@ -430,6 +450,9 @@ public  final class Cat extends
         }
         result.toys_.addAll(other.toys_);
       }
+      if (other.hasHairType()) {
+        setHairType(other.getHairType());
+      }
       this.mergeUnknownFields(other.getUnknownFields());
       return this;
     }
@@ -494,6 +517,16 @@ public  final class Cat extends
             org.codeandmagic.protobuf2hibernate.sample.Toy.Builder subBuilder = org.codeandmagic.protobuf2hibernate.sample.Toy.newBuilder();
             input.readMessage(subBuilder, extensionRegistry);
             addToys(subBuilder.buildPartial());
+            break;
+          }
+          case 72: {
+            int rawValue = input.readEnum();
+            org.codeandmagic.protobuf2hibernate.sample.HairType value = org.codeandmagic.protobuf2hibernate.sample.HairType.valueOf(rawValue);
+            if (value == null) {
+              unknownFields.mergeVarintField(9, rawValue);
+            } else {
+              setHairType(value);
+            }
             break;
           }
         }
@@ -755,6 +788,27 @@ public  final class Cat extends
     }
     public Builder clearToys() {
       result.toys_ = java.util.Collections.emptyList();
+      return this;
+    }
+    
+    // optional .domain.HairType hairType = 9;
+    public boolean hasHairType() {
+      return result.hasHairType();
+    }
+    public org.codeandmagic.protobuf2hibernate.sample.HairType getHairType() {
+      return result.getHairType();
+    }
+    public Builder setHairType(org.codeandmagic.protobuf2hibernate.sample.HairType value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      result.hasHairType = true;
+      result.hairType_ = value;
+      return this;
+    }
+    public Builder clearHairType() {
+      result.hasHairType = false;
+      result.hairType_ = org.codeandmagic.protobuf2hibernate.sample.HairType.STRAIGHT;
       return this;
     }
   }
