@@ -4,10 +4,6 @@
         "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
  <hibernate-mapping>
-    <typedef class="org.codeandmagic.protobuf2hibernate.MessageToByteArray" name="InnerMessage">
-        <param name="messageType">org.codeandmagic.protobuf2hibernate.sample.Person</param>
-    </typedef>
-
     <class name="org.codeandmagic.protobuf2hibernate.sample.Cat$Builder" table="cats">
         <tuplizer class="org.codeandmagic.protobuf2hibernate.ProtobufEntityTuplizer" entity-mode="pojo" />
         <id name="uuid" type="string" />
@@ -22,8 +18,11 @@
         </bag>
 
         <!-- Message field serialized as blob -->
-        <property name="owner" type="InnerMessage">
+        <property name="owner">
             <meta attribute="protobuf-transform">false</meta>
+            <type name="org.codeandmagic.protobuf2hibernate.MessageToByteArray">
+                <param name="messageType">org.codeandmagic.protobuf2hibernate.sample.Person</param>
+            </type>
         </property>    
 
         <!-- Collection of Entities -->

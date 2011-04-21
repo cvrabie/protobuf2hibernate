@@ -16,6 +16,9 @@ import java.util.*;
 public abstract class ProtobufTuplizer implements Tuplizer {
     private final static Logger log = LoggerFactory.getLogger(ProtobufTuplizer.class);
 
+    public final static String META_SELF = "protobuf-self";
+    public final static String META_TRANSFORM = "protobuf-transform";
+
     protected final Class<? extends Message.Builder> builderClass;
     protected final Descriptors.Descriptor classDescriptor;
     protected final String entityName;
@@ -51,12 +54,15 @@ public abstract class ProtobufTuplizer implements Tuplizer {
         while (propertiesIterator.hasNext()){
             final Property property = (Property) propertiesIterator.next();
 
-            final MetaAttribute selfBulk = property.getMetaAttribute("protobuf_self_bulk");
-            if(null != selfBulk && "true".equals(selfBulk.getValue().trim().toLowerCase()))
-                bulkProp = property.getName();
-
+            //create a cache of property index to property name
             propertyCacheByName.put(property.getName(), property);
             propertyIndexToPropertyName.put(i, property.getName());
+
+            //add field descriptor cache for properties that are not fields in the protobuf class
+            final MetaAttribute selfBulk = property.getMetaAttribute(META_SELF);
+            if(null != selfBulk && "true".equals(selfBulk.getValue().trim().toLowerCase())){
+                fieldCacheByName.put(property.getName(), classDescriptor);
+            }
 
             ++i;
         }
@@ -68,13 +74,12 @@ public abstract class ProtobufTuplizer implements Tuplizer {
             fieldCacheByName.put(field.getName(),field);
             final Property p = propertyCacheByName.get(field.getName());
             if(null != p){
-                final MetaAttribute pt = p.getMetaAttribute("protobuf-transform");
+                final MetaAttribute pt = p.getMetaAttribute(META_TRANSFORM);
                 accessTypeByName.put(field.getName(), null==pt || "true".equals(pt.getValue().trim().toLowerCase()) ?
                                     FieldAccessType.TRANSFORM_MESSAGE_TO_BUILDER :
                                     FieldAccessType.NO_TRANSFORM);
             }
         }
-        if(null != bulkPropertyName) fieldCacheByName.put(bulkPropertyName, classDescriptor);
 
         for(Map.Entry<Integer,String> entry : propertyIndexToPropertyName.entrySet()){
             fieldCacheByIndex.put(entry.getKey(), fieldCacheByName.get(entry.getValue()));
