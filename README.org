@@ -3,8 +3,12 @@ Protobuf2Hibernate is meant to allow you to directly persist [[http://code.googl
 messages with [[http://www.hibernate.org/][Hibernate]].
 
 ** Warning!
-This is still in early development. There are still some things that don't work propertly, +like cascading of associated
-Message entities+. Bear with me!
+This is still in early development. There are still some things that don't work propertly, like:
++ +cascading associated Message entities+.
++ +cascading associated Messages as composite elements+
++ +persisting protobuf enums+
++ +saving part of the object as a bulk+
+Bear with me! Or better: help out.
 
 ** Why?
 As you know, Hibernate has some requirements about the form of the persisted objects. For example it needs an accessible
