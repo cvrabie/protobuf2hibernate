@@ -8,6 +8,7 @@ This is still in early development. There are still some things that don't work 
 + +cascading associated Messages as composite elements+
 + +persisting protobuf enums+
 + +saving part of the object as a bulk+
++ count queries
 Bear with me! Or better: help out.
 
 ** Why?

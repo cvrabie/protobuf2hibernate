@@ -6,6 +6,7 @@ import org.hibernate.HibernateException;
 import java.util.List;
 
 import static org.codeandmagic.protobuf2hibernate.ProtobufTransformer.protobufBuilderToMessage;
+import static org.codeandmagic.protobuf2hibernate.ProtobufTransformer.transformQueryResult;
 
 public class ProtobufTransformerCriteria extends WrappedCriteria {
 
@@ -20,11 +21,11 @@ public class ProtobufTransformerCriteria extends WrappedCriteria {
 
     @Override
     public List list() throws HibernateException {
-        return protobufBuilderToMessage(wrapped.list());
+        return transformQueryResult(wrapped.list());
     }
 
     @Override
     public Object uniqueResult() throws HibernateException {
-        return protobufBuilderToMessage(wrapped.uniqueResult());
+        return transformQueryResult(wrapped.uniqueResult());
     }
 }

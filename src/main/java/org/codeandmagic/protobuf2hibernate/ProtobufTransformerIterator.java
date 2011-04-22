@@ -4,7 +4,7 @@ import com.google.protobuf.Message;
 
 import java.util.Iterator;
 
-import static org.codeandmagic.protobuf2hibernate.ProtobufTransformer.protobufBuilderToMessage;
+import static org.codeandmagic.protobuf2hibernate.ProtobufTransformer.transformQueryResult;
 
 public class ProtobufTransformerIterator<E extends Message> extends WrappedIterator<E>{
     public ProtobufTransformerIterator(Iterator<E> wrapped) {
@@ -13,6 +13,6 @@ public class ProtobufTransformerIterator<E extends Message> extends WrappedItera
 
     @Override
     public E next() {
-        return (E) protobufBuilderToMessage(wrapped.next());
+        return (E) transformQueryResult(wrapped.next());
     }
 }

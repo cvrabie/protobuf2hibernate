@@ -62,4 +62,18 @@ public class ProtobufTransformer {
         }
         return Arrays.asList(transformed);
     }
+
+    public static Object transformQueryResult(Object object){
+        if(object instanceof Message || object instanceof Message.Builder)
+            return protobufBuilderToMessage(object);
+        //else the result must be to a "non-load query" like a count
+        return object;
+    }
+
+    public static List<?> transformQueryResult(List<?> object){
+        if(object != null && object.size()>0 && object.get(0) instanceof Message.Builder)
+            return protobufBuilderToMessage(object);
+        //else the result must be to a "non-load query" like a count
+        return object;
+    }
 }

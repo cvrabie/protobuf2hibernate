@@ -6,7 +6,7 @@ import org.hibernate.Query;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.codeandmagic.protobuf2hibernate.ProtobufTransformer.protobufBuilderToMessage;
+import static org.codeandmagic.protobuf2hibernate.ProtobufTransformer.transformQueryResult;
 
 public class ProtobufTransformerQuery extends WrappedQuery {
     public ProtobufTransformerQuery(Query wrapped){
@@ -25,11 +25,11 @@ public class ProtobufTransformerQuery extends WrappedQuery {
 
     @Override
     public List list() throws HibernateException {
-        return protobufBuilderToMessage(wrapped.list());
+        return transformQueryResult(wrapped.list());
     }
 
     @Override
     public Object uniqueResult() throws HibernateException {
-        return protobufBuilderToMessage(wrapped.uniqueResult());
+        return transformQueryResult(wrapped.uniqueResult());
     }
 }
