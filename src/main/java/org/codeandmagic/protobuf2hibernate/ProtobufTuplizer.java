@@ -55,8 +55,8 @@ public abstract class ProtobufTuplizer implements Tuplizer {
             final Property property = (Property) propertiesIterator.next();
 
             //create a cache of property index to property name
-            propertyCacheByName.put(property.getName(), property);
-            propertyIndexToPropertyName.put(i, property.getName());
+            propertyCacheByName.put(NamingStyleUtils.java2cpp(property.getName()), property);
+            propertyIndexToPropertyName.put(i, NamingStyleUtils.java2cpp(property.getName()));
 
             //add field descriptor cache for properties that are not fields in the protobuf class
             final MetaAttribute selfBulk = property.getMetaAttribute(META_SELF);
@@ -110,7 +110,7 @@ public abstract class ProtobufTuplizer implements Tuplizer {
 	}
 
     public Object getPropertyValue(final Object entity, final String propertyName) throws HibernateException{
-        return getPropertyValue(entity, fieldCacheByName.get(propertyName));
+        return getPropertyValue(entity, fieldCacheByName.get(NamingStyleUtils.java2cpp(propertyName)));
     }
 
     @Override
@@ -203,7 +203,7 @@ public abstract class ProtobufTuplizer implements Tuplizer {
 
     public void setPropertyValue(final Object entity, final String propertyName,
                                  final Object value) throws HibernateException{
-        setPropertyValue(entity, fieldCacheByName.get(propertyName), value);
+        setPropertyValue(entity, fieldCacheByName.get(NamingStyleUtils.java2cpp(propertyName)), value);
     }
 
     protected void setPropertyValue(final Object entity, final Object propertyDescriptor,
